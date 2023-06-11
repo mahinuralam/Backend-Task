@@ -71,7 +71,7 @@ const getAllPosts = asyncWrapper(async (req, res, next) => {
     const totalPages = Math.ceil(totalCount / limit);
 
     if (!post) {
-        res.status(404)
+        return next(createCustomError(`No Post available`, 404))
     }
     res.status(200).json({ post , total_page:totalPages})
 
@@ -82,7 +82,7 @@ const getPost = asyncWrapper(async (req, res, next) => {
     const id = req.params.id
     const post = await Post.findByPk(id)
     if (!post) {
-        res.status(404)
+        return next(createCustomError(`No Post with id : ${id}`, 404))
     }
     res.status(200).json({ post })
 })
@@ -92,7 +92,7 @@ const updatePost = asyncWrapper(async (req, res, next) => {
     const id = req.params.id;
     const post = await Post.update(req.body, { where: { id: id } }); 
     if (!post) {
-        res.status(404);
+        return next(createCustomError(`No Post with id : ${id}`, 404))
     }
     res.status(200).json({ post });
   });
@@ -103,7 +103,7 @@ const deletePost = asyncWrapper(async (req, res, next) => {
     const id = req.params.id
     const post = await Post.destroy({ where: { id: id } });
     if (!post) {
-        res.status(404)
+        return next(createCustomError(`No Post with id : ${id}`, 404))
     }
     res.status(200).json({ post })
 })
@@ -124,76 +124,66 @@ const userPostReaction = asyncWrapper(async (req, res, next) => {
     console.log("USER POST REACTION");
     const { user_id, post_id } = req.body;
     console.log(" IDS ", user_id, post_id);
-  
+
     // Check if there is already a user_post_reaction with user_id
     let user_post_reaction = await User_post_reaction.findOne({
       where: { user_id: user_id, post_id: post_id },
     });
-  
+    
+    let rect = -1;
     if (!user_post_reaction) {
-      // User_post_reaction doesn't exist, create a new one
-      user_post_reaction = await User_post_reaction.create(req.body);
+    //   User_post_reaction doesn't exist, create a new one
+        console.log(" ASE ")
+        rect = 1;
+        user_post_reaction = await User_post_reaction.create(req.body);
     }
   
     // Extract the reaction_id and status from the user_post_reaction
     const { reaction_id, status } = user_post_reaction;
   
     // Perform a query on the Post table
-    const post = await Post.findOne({ where: { id: post_id } });
+    const post = await Post.findOne({id: post_id})
+
   
     let reactionValue = null;
   
     for (const [key, value] of Object.entries(ReactionEnum)) {
       if (value === reaction_id) {
         reactionValue = key;
+        console.log(" FOUND ", key);
         break;
       }
     }
+
+    if (reactionValue === "Love") {
+        // post.love += rect;
+      } else if (reactionValue === "Funny") {
+        // post.funny += react;
+      } else if (reactionValue === "Like") {
+        // post.like += react;
+      } else if (reactionValue === "Care") {
+        // post.care += react;
+      } else if (reactionValue === "Wow") {
+        // post.wow += react;
+      } else if (reactionValue === "Angry") {
+        // post.angry += react;
+      } else if (reactionValue === "Sad") {
+        // post.sad += react;
+      }
   
     if (status === 0) {
       // Increment total_reaction by one
-      post.total_reaction += 1;
-      if (reactionValue === "Love") {
-        post.love += 1;
-      } else if (reactionValue === "Funny") {
-        post.funny += 1;
-      } else if (reactionValue === "Like") {
-        post.like += 1;
-      } else if (reactionValue === "Care") {
-        post.care += 1;
-      } else if (reactionValue === "Wow") {
-        post.wow += 1;
-      } else if (reactionValue === "Angry") {
-        post.angry += 1;
-      } else if (reactionValue === "Sad") {
-        post.sad += 1;
-      }
-      await post.save();
-      user_post_reaction.status = 1; // Update the status of user_post_reaction
-      await user_post_reaction.save();
+    //   post.total_reaction += react;
+    //   await post.save();
+        user_post_reaction.status = 1;
     } else {
       // Decrement total_reaction by one
-      post.total_reaction -= 1;
-      if (reactionValue === "Love") {
-        post.love -= 1;
-      } else if (reactionValue === "Funny") {
-        post.funny -= 1;
-      } else if (reactionValue === "Like") {
-        post.like -= 1;
-      } else if (reactionValue === "Care") {
-        post.care -= 1;
-      } else if (reactionValue === "Wow") {
-        post.wow -= 1;
-      } else if (reactionValue === "Angry") {
-        post.angry -= 1;
-      } else if (reactionValue === "Sad") {
-        post.sad -= 1;
-      }
-      await post.save();
-      user_post_reaction.status = 0; // Update the status of user_post_reaction
-      await user_post_reaction.save();
+    //   post.total_reaction += react;
+      //   await post.save();
+      user_post_reaction.status = 0;
     }
-    console.log(" REACT count ", post.total_reaction);
+    user_post_reaction.save()
+    // console.log(" REACT count ", post.total_reaction);
     res.status(200).json({ user_post_reaction });
   });
   
