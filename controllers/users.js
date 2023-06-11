@@ -9,7 +9,6 @@ const User = db.User;
 //signing a user up
 //hashing users password before its saved to the database with bcrypt
 const signup = async (req, res) => {
-    console.log(" SIGNIN ");
   try {
     const { name, email, password } = req.body;
     const data = {
@@ -30,7 +29,7 @@ const signup = async (req, res) => {
 
       res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
       console.log("user", JSON.stringify(user, null, 2));
-      console.log(token);
+    //   console.log(token);
       //send users details
       return res.status(201).send(user);
     } else {
@@ -44,7 +43,6 @@ const signup = async (req, res) => {
 //login authentication
 
 const login = async (req, res) => {
-    console.log(" USER LOGIN ")
   try {
     const { email, password } = req.body;
 
