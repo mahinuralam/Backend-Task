@@ -1,0 +1,17 @@
+version: "3"
+services:
+  fb-clone-backend:
+    restart: always
+    build:
+        context: .
+        dockerfile: Dockerfile
+    image: fb-clone-backend
+    ports:
+        - "3000:3000"
+    environment:
+      - PGHOST=192.168.68.107
+      - POSTGRES_PORT=5432
+      - PGPASSWORD=password
+      - PGUSER='postgres'
+      - PGDATABASE='postgres'
+    container_name: fb-clone-backend

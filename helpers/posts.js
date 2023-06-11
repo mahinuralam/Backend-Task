@@ -18,90 +18,94 @@ const saveFile = async (file) => {
 };
 
 const reactStatus = async (post, status, curr_react, prev_react) => {
-  if (status === 0) {
-    console.log(" prev_react ", curr_react);
+  if (status === false) {
+    console.log(" prev_react innnn ", curr_react);
     if (curr_react === "love") {
       post.total_love += 1;
-      console.log(" post love ", post.love);
+      console.log(" post love ", post.total_love);
     } else if (curr_react === "funny") {
       post.total_funny += 1;
-      console.log(" post funny ", post.funny);
+      console.log(" post funny ", post.total_funny);
     } else if (curr_react === "like") {
       post.total_like += 1;
-      console.log(" post like ", post.like);
+      console.log(" post like ", post.total_like);
     } else if (curr_react === "care") {
       post.total_care += 1;
-      console.log(" post care ", post.care);
+      console.log(" post care ", post.total_care);
     } else if (curr_react === "wow") {
       post.total_wow += 1;
-      console.log(" post wow ", post.wow);
+      console.log(" post wow ", post.total_wow);
     } else if (curr_react === "angry") {
       post.total_angry += 1;
-      console.log(" post angry ", post.angry);
+      console.log(" post angry ", post.total_angry);
     } else if (curr_react === "sad") {
       post.total_sad += 1;
-      console.log(" post sad ", post.sad);
+      console.log(" post sad ", post.total_sad);
     }
   } else {
-    
-    console.log(" prev_react ", prev_react);
-    console.log(" curr_react ", curr_react);
+    console.log(" prev_reactinnnn ", prev_react);
+    console.log(" curr_reactinnnn ", curr_react);
 
-    if (curr_react === "love") {
-      post.total_love += 1;
-      console.log(" post love ", post.love);
-    } else if (curr_react === "funny") {
-      post.total_funny += 1;
-      console.log(" post funny ", post.funny);
-    } else if (curr_react === "like") {
-      post.total_like += 1;
-      console.log(" post like ", post.like);
-    } else if (curr_react === "care") {
-      post.total_care += 1;
-      console.log(" post care ", post.care);
-    } else if (curr_react === "wow") {
-      post.total_wow += 1;
-      console.log(" post wow ", post.wow);
-    } else if (curr_react === "angry") {
-      post.total_angry += 1;
-      console.log(" post angry ", post.angry);
-    } else if (curr_react === "sad") {
-      post.total_sad += 1;
-      console.log(" post sad ", post.sad);
+    if (curr_react != prev_react) {
+      if (curr_react === "love") {
+        post.total_love += 1;
+        console.log(" post love ", post.total_love);
+      } else if (curr_react === "funny") {
+        post.total_funny += 1;
+        console.log(" post funny ", post.total_funny);
+      } else if (curr_react === "like") {
+        post.total_like += 1;
+        console.log(" post like ", post.total_like);
+      } else if (curr_react === "care") {
+        post.total_care += 1;
+        console.log(" post care ", post.total_care);
+      } else if (curr_react === "wow") {
+        post.total_wow += 1;
+        console.log(" post wow ", post.total_wow);
+      } else if (curr_react === "angry") {
+        post.total_angry += 1;
+        console.log(" post angry ", post.total_angry);
+      } else if (curr_react === "sad") {
+        post.total_sad += 1;
+        console.log(" post sad ", post.total_sad);
+      }
+
+
+      
     }
 
     if (prev_react === "love") {
       post.total_love -= 1;
-      console.log(" post love ", post.love);
+      console.log(" post love ", post.total_love);
     } else if (prev_react === "funny") {
       post.total_funny -= 1;
-      console.log(" post funny ", post.funny);
+      console.log(" post funny ", post.total_funny);
     } else if (prev_react === "like") {
       post.total_like -= 1;
-      console.log(" post like ", post.like);
+      console.log(" post like ", post.total_like);
     } else if (prev_react === "care") {
       post.total_care -= 1;
-      console.log(" post care ", post.care);
+      console.log(" post care ", post.total_care);
     } else if (prev_react === "wow") {
       post.total_wow -= 1;
-      console.log(" post wow ", post.wow);
+      console.log(" post wow ", post.total_wow);
     } else if (prev_react === "angry") {
       post.total_angry -= 1;
-      console.log(" post angry ", post.angry);
+      console.log(" post angry ", post.total_angry);
     } else if (prev_react === "sad") {
       post.total_sad -= 1;
-      console.log(" post sad ", post.sad);
+      console.log(" post sad ", post.total_sad);
     }
   }
 
   post.total_reaction =
-    post.love +
-    post.care +
-    post.funny +
-    post.sad +
-    post.angry +
-    post.like +
-    post.wow;
+    post.total_love +
+    post.total_care +
+    post.total_funny +
+    post.total_sad +
+    post.total_angry +
+    post.total_like +
+    post.total_wow;
 
   console.log(" total reaction ", post.total_reaction);
 };

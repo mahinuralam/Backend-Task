@@ -2,14 +2,14 @@ const asyncWrapper = require("../middleware/async");
 const db = require("../database/connection");
 const helper = require("../helpers/posts");
 const enums = require("./enums");
+const { literal } = require("sequelize");
 const Post = db.Post;
 const Post_comment = db.Post_comment;
 const User_post_reaction = db.User_post_reaction;
 
-
 const createPost = async (req, res, next) => {
   console.log("req", req.file);
-  const saveFile = helper.saveFile
+  const saveFile = helper.saveFile;
   const filePath = await saveFile(req.file);
   if (!filePath) {
     return next(createCustomError(`No Post available`, 404));
@@ -24,7 +24,6 @@ const createPost = async (req, res, next) => {
   }
   res.status(200).json({ post });
 };
-
 
 const getAllPosts = asyncWrapper(async (req, res, next) => {
   // console.log(req.query)
@@ -56,7 +55,6 @@ const getAllPosts = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ post, total_page: totalPages });
 });
 
-
 const getPost = asyncWrapper(async (req, res, next) => {
   console.log("GET POST");
   const id = req.params.id;
@@ -66,7 +64,6 @@ const getPost = asyncWrapper(async (req, res, next) => {
   }
   res.status(200).json({ post });
 });
-
 
 const updatePost = asyncWrapper(async (req, res, next) => {
   console.log("UPDATE POST");
@@ -88,13 +85,11 @@ const deletePost = asyncWrapper(async (req, res, next) => {
   res.status(200).json({ post });
 });
 
-
 const postComment = asyncWrapper(async (req, res, next) => {
   console.log("POST COMMENT");
   const post_comment = await Post_comment.create(req.body);
   res.status(200).json({ post_comment });
 });
-
 
 const userPostReaction = asyncWrapper(async (req, res, next) => {
   console.log("USER POST REACTION");
@@ -105,237 +100,798 @@ const userPostReaction = asyncWrapper(async (req, res, next) => {
   let user_post_reaction = await User_post_reaction.findOne({
     where: { user_id: user_id, post_id: post_id },
   });
-
-  const id = post_id;
-  const post = await Post.findByPk(id);
-  if (!post) {
-    return next(createCustomError(`No Post with id : ${id}`, 404));
-  }
-
+  //if does reaction does not exist create reaction
   if (!user_post_reaction) {
-    //   User_post_reaction doesn't exist, create a new one
-    console.log(" NAIIIII ");
-    let user_post_reaction = await User_post_reaction.create(req.body);
-    let reaction_id = user_post_reaction.reaction_id;
-    let status = user_post_reaction.status;
-    let prev_react = "";
-    for (const [key, value] of Object.entries(enums.ReactionEnum)) {
-      if (value === reaction_id) {
-        curr_react = key;
-        break;
-      }
+    await User_post_reaction.create(req.body);
+    if (req.body.reaction_id == 1) {
+      console.log("HERE===");
+      await Post.update(
+        {
+          total_funny: literal("total_funny + 1"),
+          total_reaction: literal("total_reaction + 1"),
+        },
+        {
+          where: {
+id: req.body.post_id
+          },
+        }
+      )
+        .then((result) => {
+          console.log(`${result} post(s) updated successfully.`);
+        })
+        .catch((error) => {
+          console.error("Error updating posts:", error);
+        });
     }
-
-    if (status === 0) {
-      console.log(" prev_react ", curr_react);
-      if (curr_react === "love") {
-        post.total_love += 1;
-        console.log(" post love ", post.love);
-      } else if (curr_react === "funny") {
-        post.total_funny += 1;
-        console.log(" post funny ", post.funny);
-      } else if (curr_react === "like") {
-        post.total_like += 1;
-        console.log(" post like ", post.like);
-      } else if (curr_react === "care") {
-        post.total_care += 1;
-        console.log(" post care ", post.care);
-      } else if (curr_react === "wow") {
-        post.total_wow += 1;
-        console.log(" post wow ", post.wow);
-      } else if (curr_react === "angry") {
-        post.total_angry += 1;
-        console.log(" post angry ", post.angry);
-      } else if (curr_react === "sad") {
-        post.total_sad += 1;
-        console.log(" post sad ", post.sad);
+    if (req.body.reaction_id == 2) {
+      console.log("HERE===");
+      await Post.update(
+        {
+          total_love: literal("total_love + 1"),
+          total_reaction: literal("total_reaction + 1"),
+        },
+        {
+          where: {
+id: req.body.post_id
+          },
+        }
+      )
+        .then((result) => {
+          console.log(`${result} post(s) updated successfully.`);
+        })
+        .catch((error) => {
+          console.error("Error updating posts:", error);
+        });
+    }
+    if (req.body.reaction_id == 3) {
+      console.log("HERE===");
+      await Post.update(
+        {
+          total_care: literal("total_care + 1"),
+          total_reaction: literal("total_reaction + 1"),
+        },
+        {
+          where: {
+id: req.body.post_id
+          },
+        }
+      )
+        .then((result) => {
+          console.log(`${result} post(s) updated successfully.`);
+        })
+        .catch((error) => {
+          console.error("Error updating posts:", error);
+        });
+    }
+    if (req.body.reaction_id == 4) {
+      console.log("HERE===");
+      await Post.update(
+        {
+          total_angry: literal("total_angry + 1"),
+          total_reaction: literal("total_reaction + 1"),
+        },
+        {
+          where: {
+id: req.body.post_id
+          },
+        }
+      )
+        .then((result) => {
+          console.log(`${result} post(s) updated successfully.`);
+        })
+        .catch((error) => {
+          console.error("Error updating posts:", error);
+        });
+    }
+    if (req.body.reaction_id == 5) {
+      console.log("HERE===");
+      await Post.update(
+        {
+          total_like: literal("total_like + 1"),
+          total_reaction: literal("total_reaction + 1"),
+        },
+        {
+          where: {
+id: req.body.post_id
+          },
+        }
+      )
+        .then((result) => {
+          console.log(`${result} post(s) updated successfully.`);
+        })
+        .catch((error) => {
+          console.error("Error updating posts:", error);
+        });
+    }
+    if (req.body.reaction_id == 6) {
+      console.log("HERE===");
+      await Post.update(
+        {
+          total_wow: literal("total_wow + 1"),
+          total_reaction: literal("total_reaction + 1"),
+        },
+        {
+          where: {
+            post_id: req.body.post_id,
+            user_id: req.body.user_id,
+          },
+        }
+      )
+        .then((result) => {
+          console.log(`${result} post(s) updated successfully.`);
+        })
+        .catch((error) => {
+          console.error("Error updating posts:", error);
+        });
+    }
+    if (req.body.reaction_id == 7) {
+      console.log("HERE===");
+      await Post.update(
+        {
+          total_sad: literal("total_sad + 1"),
+          total_reaction: literal("total_reaction + 1"),
+        },
+        {
+          where: {
+            post_id: req.body.post_id,
+            user_id: req.body.user_id,
+          },
+        }
+      )
+        .then((result) => {
+          console.log(`${result} post(s) updated successfully.`);
+        })
+        .catch((error) => {
+          console.error("Error updating posts:", error);
+        });
+    }
+  }
+  //if reaction exist & user send same reaction
+  if (user_post_reaction) {
+    console.log("user_post_reaction", user_post_reaction.dataValues);
+    if(user_post_reaction.dataValues.status == false){
+      //update status to true
+      //inciment react & total count
+            if (req.body.reaction_id == 1) {
+              console.log("HERE=================", req.body.post_id);
+              await Post.update(
+                {
+                  total_funny: literal("total_funny + 1"),
+                  total_reaction: literal("total_reaction + 1"),
+                },
+                {
+                  where: {
+                   id: req.body.post_id
+                  },
+                }
+              )
+                .then((result) => {
+                  console.log(`${result} post(s) updated successfully.`);
+                })
+                .catch((error) => {
+                  console.error("Error updating posts:", error);
+                });
+            }
+            if (req.body.reaction_id == 2) {
+              console.log("HERE===");
+              await Post.update(
+                {
+                  total_love: literal("total_love + 1"),
+                  total_reaction: literal("total_reaction + 1"),
+                },
+                {
+                  where: {
+                   id: req.body.post_id
+                  },
+                }
+              )
+                .then((result) => {
+                  console.log(`${result} post(s) updated successfully.`);
+                })
+                .catch((error) => {
+                  console.error("Error updating posts:", error);
+                });
+            }
+            if (req.body.reaction_id == 3) {
+              console.log("HERE===");
+              await Post.update(
+                {
+                  total_care: literal("total_care + 1"),
+                  total_reaction: literal("total_reaction + 1"),
+                },
+                {
+                  where: {
+                   id: req.body.post_id
+                  },
+                }
+              )
+                .then((result) => {
+                  console.log(`${result} post(s) updated successfully.`);
+                })
+                .catch((error) => {
+                  console.error("Error updating posts:", error);
+                });
+            }
+            if (req.body.reaction_id == 4) {
+              console.log("HERE===");
+              await Post.update(
+                {
+                  total_angry: literal("total_angry + 1"),
+                  total_reaction: literal("total_reaction + 1"),
+                },
+                {
+                  where: {
+                   id: req.body.post_id
+                  },
+                }
+              )
+                .then((result) => {
+                  console.log(`${result} post(s) updated successfully.`);
+                })
+                .catch((error) => {
+                  console.error("Error updating posts:", error);
+                });
+            }
+            if (req.body.reaction_id == 5) {
+              console.log("HERE===");
+              await Post.update(
+                {
+                  total_like: literal("total_like + 1"),
+                  total_reaction: literal("total_reaction + 1"),
+                },
+                {
+                  where: {
+                   id: req.body.post_id
+                  },
+                }
+              )
+                .then((result) => {
+                  console.log(`${result} post(s) updated successfully.`);
+                })
+                .catch((error) => {
+                  console.error("Error updating posts:", error);
+                });
+            }
+            if (req.body.reaction_id == 6) {
+              console.log("HERE===");
+              await Post.update(
+                {
+                  total_wow: literal("total_wow + 1"),
+                  total_reaction: literal("total_reaction + 1"),
+                },
+                {
+                  where: {
+                   id: req.body.post_id
+                  },
+                }
+              )
+                .then((result) => {
+                  console.log(`${result} post(s) updated successfully.`);
+                })
+                .catch((error) => {
+                  console.error("Error updating posts:", error);
+                });
+            }
+            if (req.body.reaction_id == 7) {
+              console.log("HERE===");
+              await Post.update(
+                {
+                  total_sad: literal("total_sad + 1"),
+                  total_reaction: literal("total_reaction + 1"),
+                },
+                {
+                  where: {
+                   id: req.body.post_id
+                  },
+                }
+              )
+                .then((result) => {
+                  console.log(`${result} post(s) updated successfully.`);
+                })
+                .catch((error) => {
+                  console.error("Error updating posts:", error);
+                });
+            }
+               await User_post_reaction.update(
+                 {
+                   status: true,
+                   reaction_id: req.body.reaction_id
+                 },
+                 {
+                   where: {
+                     user_id: req.body.user_id,
+                     post_id: req.body.post_id,
+                   },
+                 }
+               );
+    }
+    else if (user_post_reaction.dataValues.reaction_id == req.body.reaction_id) {
+      console.log("HERE");
+      //deduct totalcount & deducet react count & change status to false
+      if (req.body.reaction_id == 1) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_funny: literal("total_funny - 1"),
+            total_reaction: literal("total_reaction - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
       }
+      if (req.body.reaction_id == 2) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_love: literal("total_love - 1"),
+            total_reaction: literal("total_reaction - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      if (req.body.reaction_id == 3) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_care: literal("total_care - 1"),
+            total_reaction: literal("total_reaction - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      if (req.body.reaction_id == 4) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_angry: literal("total_angry - 1"),
+            total_reaction: literal("total_reaction - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      if (req.body.reaction_id == 5) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_like: literal("total_like - 1"),
+            total_reaction: literal("total_reaction - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      if (req.body.reaction_id == 6) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_wow: literal("total_wow - 1"),
+            total_reaction: literal("total_reaction - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      if (req.body.reaction_id == 7) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_sad: literal("total_sad - 1"),
+            total_reaction: literal("total_reaction - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      await User_post_reaction.update(
+        {
+          status: false
+        },
+        {
+          where: {
+            user_id: req.body.user_id,
+            post_id: req.body.post_id
+          },
+        }
+      );
     } else {
-      console.log(" prev_react ", prev_react);
-      console.log(" curr_react ", curr_react);
-
-      if (curr_react === "love") {
-        post.total_love += 1;
-        console.log(" post love ", post.love);
-      } else if (curr_react === "funny") {
-        post.total_funny += 1;
-        console.log(" post funny ", post.funny);
-      } else if (curr_react === "like") {
-        post.total_like += 1;
-        console.log(" post like ", post.like);
-      } else if (curr_react === "care") {
-        post.total_care += 1;
-        console.log(" post care ", post.care);
-      } else if (curr_react === "wow") {
-        post.total_wow += 1;
-        console.log(" post wow ", post.wow);
-      } else if (curr_react === "angry") {
-        post.total_angry += 1;
-        console.log(" post angry ", post.angry);
-      } else if (curr_react === "sad") {
-        post.total_sad += 1;
-        console.log(" post sad ", post.sad);
+      console.log("EREasdasdasdasdasd")
+      //if does not match
+      //decrement previous react count
+      if (user_post_reaction.dataValues.reaction_id == 1) {
+        await Post.update(
+          {
+            total_funny: literal("total_funny - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id,
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      } else if (user_post_reaction.dataValues.reaction_id == 2) {
+        await Post.update(
+          {
+            total_love: literal("total_love - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      } else if (user_post_reaction.dataValues.reaction_id == 3) {
+        await Post.update(
+          {
+            total_care: literal("total_care - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      } else if (user_post_reaction.dataValues.reaction_id == 4) {
+        await Post.update(
+          {
+            total_angry: literal("total_angry - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      } else if (user_post_reaction.dataValues.reaction_id == 5) {
+        await Post.update(
+          {
+            total_like: literal("total_like - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      } else if (user_post_reaction.dataValues.reaction_id == 6) {
+        await Post.update(
+          {
+            total_wow: literal("total_wow - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      } else if (user_post_reaction.dataValues.reaction_id == 7) {
+        await Post.update(
+          {
+            total_sad: literal("total_sad - 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
       }
 
-      if (prev_react === "love") {
-        post.total_love -= 1;
-        console.log(" post love ", post.love);
-      } else if (prev_react === "funny") {
-        post.total_funny -= 1;
-        console.log(" post funny ", post.funny);
-      } else if (prev_react === "like") {
-        post.total_like -= 1;
-        console.log(" post like ", post.like);
-      } else if (prev_react === "care") {
-        post.total_care -= 1;
-        console.log(" post care ", post.care);
-      } else if (prev_react === "wow") {
-        post.total_wow -= 1;
-        console.log(" post wow ", post.wow);
-      } else if (prev_react === "angry") {
-        post.total_angry -= 1;
-        console.log(" post angry ", post.angry);
-      } else if (prev_react === "sad") {
-        post.total_sad -= 1;
-        console.log(" post sad ", post.sad);
+      //
+      if (req.body.reaction_id == 1) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_funny: literal("total_funny + 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
       }
+      else if (req.body.reaction_id == 2) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_love: literal("total_love + 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      else if (req.body.reaction_id == 3) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_care: literal("total_care + 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      else if (req.body.reaction_id == 4) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_angry: literal("total_angry + 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      else if (req.body.reaction_id == 5) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_like: literal("total_like + 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      else if (req.body.reaction_id == 6) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_wow: literal("total_wow + 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+      else if (req.body.reaction_id == 7) {
+        console.log("HERE===");
+        await Post.update(
+          {
+            total_sad: literal("total_sad + 1"),
+          },
+          {
+            where: {
+              id: req.body.post_id
+            },
+          }
+        )
+          .then((result) => {
+            console.log(`${result} post(s) updated successfully.`);
+          })
+          .catch((error) => {
+            console.error("Error updating posts:", error);
+          });
+      }
+        await User_post_reaction.update(
+          {
+            reaction_id: req.body.reaction_id,
+          },
+          {
+            where: {
+              user_id: req.body.user_id,
+              post_id: req.body.post_id,
+            },
+          }
+        );
+
+
+
     }
-
-    post.total_reaction =
-      post.love +
-      post.care +
-      post.funny +
-      post.sad +
-      post.angry +
-      post.like +
-      post.wow;
-
-    console.log(" total reaction ", post.total_reaction);
-
-    user_post_reaction.status = true;
-    await post.save();
-    await user_post_reaction.save();
-    console.log(" REACT count ", post.total_reaction);
-    res.status(200).json({ user_post_reaction });
-    return;
   }
+  // const id = post_id;
+  // const post = await Post.findByPk(id);
+  // if (!post) {
+  //   return next(createCustomError(`No Post with id : ${id}`, 404));
+  // }
 
-  console.log(" ASEEEEEE ");
+  // if (!user_post_reaction) {
+  //   //   User_post_reaction doesn't exist, create a new one
+  //   console.log(" NAIIIII ");
+  //   let user_post_reaction = await User_post_reaction.create(req.body);
+  //   let reaction_id = user_post_reaction.reaction_id;
+  //   let status = user_post_reaction.status;
+  //   let prev_react = "";
+  //   for (const [key, value] of Object.entries(enums.ReactionEnum)) {
+  //     if (value === reaction_id) {
+  //       curr_react = key;
+  //       helper.reactStatus(post, status, curr_react, prev_react);
+  //       break;
+  //     }
+  //   }
 
+  //   user_post_reaction.status = true;
+  //   await post.save();
+  //   await user_post_reaction.save();
+  //   console.log(" REACT count ", post.total_reaction);
+  //   // res.status(200).json({ user_post_reaction });
+  //   res.status(200).send("HI")
+  //   return;
+  // }
 
-  var cur_reaction_id = req.body.reaction_id;
-  var prev_rection_id = user_post_reaction.reaction_id;
-  var prev_react = "", curr_react = "";
-  var status = user_post_reaction.status;
+  // var cur_reaction_id = req.body.reaction_id;
+  // var prev_rection_id = user_post_reaction.reaction_id;
+  // var prev_react = "", curr_react = "";
+  // var status = user_post_reaction.status;
 
-  
-  for (const [key, value] of Object.entries(enums.ReactionEnum)) {
-    if (value === cur_reaction_id) {
-      curr_react = key;
-      console.log(" curr_react ", curr_react);
-      break;
-    }
-  }
+  // for (const [key, value] of Object.entries(enums.ReactionEnum)) {
+  //   if (value === cur_reaction_id) {
+  //     curr_react = key;
+  //     console.log(" curr_react ", curr_react);
+  //     break;
+  //   }
+  // }
 
-  for (const [key, value] of Object.entries(enums.ReactionEnum)) {
-    if (value === prev_rection_id) {
-      prev_react = key;
-      console.log(" prev_react ", prev_react);
-      break;
-    }
-  }
+  // for (const [key, value] of Object.entries(enums.ReactionEnum)) {
+  //   if (value === prev_rection_id) {
+  //     prev_react = key;
+  //     console.log(" prev_react ", prev_react);
+  //     break;
+  //   }
+  // }
 
-  if (status === 0) {
-    console.log(" prev_react innnn ", curr_react);
-    if (curr_react === "love") {
-      post.total_love += 1;
-      console.log(" post love ", post.love);
-    } else if (curr_react === "funny") {
-      post.total_funny += 1;
-      console.log(" post funny ", post.funny);
-    } else if (curr_react === "like") {
-      post.total_like += 1;
-      console.log(" post like ", post.like);
-    } else if (curr_react === "care") {
-      post.total_care += 1;
-      console.log(" post care ", post.care);
-    } else if (curr_react === "wow") {
-      post.total_wow += 1;
-      console.log(" post wow ", post.wow);
-    } else if (curr_react === "angry") {
-      post.total_angry += 1;
-      console.log(" post angry ", post.angry);
-    } else if (curr_react === "sad") {
-      post.total_sad += 1;
-      console.log(" post sad ", post.sad);
-    }
-  } else {
-    console.log(" prev_reactinnnn ", prev_react);
-    console.log(" curr_reactinnnn ", curr_react);
-
-    if (curr_react === "love") {
-      post.total_love += 1;
-      console.log(" post love ", post.love);
-    } else if (curr_react === "funny") {
-      post.total_funny += 1;
-      console.log(" post funny ", post.funny);
-    } else if (curr_react === "like") {
-      post.total_like += 1;
-      console.log(" post like ", post.like);
-    } else if (curr_react === "care") {
-      post.total_care += 1;
-      console.log(" post care ", post.care);
-    } else if (curr_react === "wow") {
-      post.total_wow += 1;
-      console.log(" post wow ", post.wow);
-    } else if (curr_react === "angry") {
-      post.total_angry += 1;
-      console.log(" post angry ", post.angry);
-    } else if (curr_react === "sad") {
-      post.total_sad += 1;
-      console.log(" post sad ", post.sad);
-    }
-
-    if (prev_react === "love") {
-      post.total_love -= 1;
-      console.log(" post love ", post.love);
-    } else if (prev_react === "funny") {
-      post.total_funny -= 1;
-      console.log(" post funny ", post.funny);
-    } else if (prev_react === "like") {
-      post.total_like -= 1;
-      console.log(" post like ", post.like);
-    } else if (prev_react === "care") {
-      post.total_care -= 1;
-      console.log(" post care ", post.care);
-    } else if (prev_react === "wow") {
-      post.total_wow -= 1;
-      console.log(" post wow ", post.wow);
-    } else if (prev_react === "angry") {
-      post.total_angry -= 1;
-      console.log(" post angry ", post.angry);
-    } else if (prev_react === "sad") {
-      post.total_sad -= 1;
-      console.log(" post sad ", post.sad);
-    }
-  }
-
-  post.total_reaction =
-    post.love +
-    post.care +
-    post.funny +
-    post.sad +
-    post.angry +
-    post.like +
-    post.wow;
-
-  console.log(" total reaction ", post.total_reaction);
-
-  await post.save();
-  await user_post_reaction.save();
-  console.log(" REACT count ", post.total_reaction);
-  res.status(200).json({ user_post_reaction });
-
+  // helper.reactStatus(post, status, curr_react, prev_react);
+  // user_post_reaction.status = false;
+  // await post.save();
+  // await user_post_reaction.save();
+  // console.log(" REACT count ", post.total_reaction);
+  // res.status(200).json({ user_post_reaction });
+  res.status(200).json({ HI: "HI" });
 });
 
 module.exports = {
