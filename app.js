@@ -10,6 +10,7 @@ const cors = require("cors");
 const path = require('path')
 const notFound = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
+const cookieParser = require("cookie-parser");
 
 // middleware
 var corsOptions = {
@@ -21,6 +22,7 @@ app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 app.use(express.json())
+app.use(cookieParser());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 

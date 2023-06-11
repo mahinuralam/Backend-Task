@@ -1,6 +1,9 @@
 const multer = require('multer')
 const express = require('express')
 const router = express.Router()
+const userController = require("../Controllers/users");
+const { signup, login } = userController;
+const userAuth = require("../middleware/userAuth");
 
 
 const {
@@ -32,6 +35,9 @@ router.route('/create').post(upload.single('upload'),createPost)
 router.route('/:id').get(getPost).patch(updatePost).delete(deletePost)
 router.route('/post_comment').post(postComment)
 router.route('/user_post_reaction').post(userPostReaction)
+
+router.post('/signup', userAuth.saveUser, signup)
+router.post('/login', login )
 
 
 module.exports = router
