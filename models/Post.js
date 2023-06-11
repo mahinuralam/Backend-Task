@@ -1,46 +1,46 @@
 module.exports = (sequelize, Sequelize) => {
     const Post = sequelize.define("Posts", {
       user_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       comment: {
-        type: Sequelize.TEXT
+        type: Sequelize.TEXT,
       },
       attachment_url: {
         type: Sequelize.STRING,
-        defaultValue: ''
+        defaultValue: "",
       },
       total_reaction: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
-      },  
-      funny: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
-      love: {
+      total_funny: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
-      care: {
+      total_love: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
-      angry: {
+      total_care: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
-      like: {
+      total_angry: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
-      wow: {
+      total_like: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
       },
-      sad: {
+      total_wow: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
+        defaultValue: 0,
+      },
+      total_sad: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
       },
     });
   

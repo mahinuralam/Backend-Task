@@ -1,11 +1,11 @@
 const ReactionEnum = {
-    Like: 1,
-    Love: 2,
-    Care: 3,
-    Angry: 4,
-    Wow: 5,
-    Sad: 6,
-    Funny: 7,
+    like: 1,
+    love: 2,
+    care: 3,
+    angry: 4,
+    wow: 5,
+    sad: 6,
+    funny: 7,
 };
 
 module.exports = {
