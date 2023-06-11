@@ -10,7 +10,6 @@ const {
     deletePost,
     getPost,
     postComment,
-    reaction,
     userPostReaction,
 } = require('../controllers/posts')
 const upload = multer({
@@ -26,11 +25,12 @@ const upload = multer({
     }
     
 });
+
+
 router.route('/').get(getAllPosts)
 router.route('/create').post(upload.single('upload'),createPost)
 router.route('/:id').get(getPost).patch(updatePost).delete(deletePost)
 router.route('/post_comment').post(postComment)
-router.route('/reaction').post(reaction)
 router.route('/user_post_reaction').post(userPostReaction)
 
 

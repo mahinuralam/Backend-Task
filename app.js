@@ -8,6 +8,9 @@ const posts = require('./routes/posts')
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require('path')
+const notFound = require('./middleware/not-found');
+const errorHandlerMiddleware = require('./middleware/error-handler');
+
 // middleware
 var corsOptions = {
     origin: "http://localhost:8081"
@@ -24,6 +27,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // routes
 app.use('/api/v1/posts', posts);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+app.use(notFound);
+app.use(errorHandlerMiddleware);
 
 
 const port = 3000

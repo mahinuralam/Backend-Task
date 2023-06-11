@@ -11,7 +11,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       status: {
         type: Sequelize.BOOLEAN,
-        defaultValue: 0
+        defaultValue: false,
       },
     });
   
