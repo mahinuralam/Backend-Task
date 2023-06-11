@@ -1,7 +1,43 @@
+const { json } = require('express');
 const express = require('express')
+const dotenv = require('dotenv')
+dotenv.config()
+const connectDB = require('./database/connection')
 const app = express()
+const posts = require('./routes/posts')
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const path = require('path')
+// middleware
+var corsOptions = {
+    origin: "http://localhost:8081"
+};
+
+app.use(cors(corsOptions));
+
+// parse requests of content-type - application/json
+app.use(bodyParser.json());
+app.use(express.json())
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// routes
+app.use('/api/v1/posts', posts);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
 const port = 3000
 
-app.get('/', (req, res) => {
-    console.log("HELLOOO");
-});
+
+const start = async () => {
+    try {
+        connectDB.sequelize.sync();
+        app.listen(port, () =>
+        console.log(`Server is listening on port ${port}...`)
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+start();
