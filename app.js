@@ -4,7 +4,8 @@ const dotenv = require('dotenv')
 dotenv.config()
 const connectDB = require('./database/connection')
 const app = express()
-const posts = require('./routes/posts')
+const posts = require('./routes/posts');
+const users = require('./routes/users');
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require('path')
@@ -28,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // routes
 app.use('/api/v1/posts', posts);
+app.use("/api/v1/user", users);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
