@@ -47,7 +47,7 @@ npx sequelize-cli db:migrate
 7. Start the server:
 
 ```
-npm start
+npm run start
 ```
 
 - By default, the server will start on port 3000. You can access the API at http://localhost:3000.
